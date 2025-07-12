@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic AI Cold Chain Monitoring and Control System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Intelligent Blue & Green -->
+    <!-- Application Structure Plan: The SPA is structured as a narrative journey that follows the system's workflow. It starts with a high-level introduction to the "Agentic AI" concept (Perceive-Analyze-Decide). The core of the app is a visual, step-by-step diagram of the 3-stage workflow (Origin, Transit, Destination) to clearly explain the process. The highlight is an interactive simulation section featuring a live dashboard with a dynamic chart and an AI action log, making the "autonomous decision-making" tangible. It concludes with a summary of benefits. This process-oriented structure was chosen because it directly mirrors the user's provided workflow, making the complex system intuitive and easy to follow. -->
+    <!-- Visualization & Content Choices:
+        - Workflow Diagram: Goal: Organize/Explain. Viz: A responsive HTML/CSS Flexbox diagram with icons (Unicode emojis for simplicity) and connecting arrows. Interaction: Hover effects on each stage. Justification: Clearly visualizes the end-to-end process flow which is central to the concept.
+        - Interactive Simulation: Goal: Engage/Demonstrate. Viz: A "dashboard" with a dynamic line chart (Chart.js) and a text-based log. Interaction: The chart and log update automatically via JavaScript `setInterval` to simulate real-time AI control over temperature and routing. Justification: This is the "wow" factor that makes the Agentic AI concept feel real and powerful, directly showing the "decide" capability.
+        - Key Benefits: Goal: Inform/Summarize. Viz: A clean, icon-based grid layout. Interaction: Static. Justification: Provides a quick, scannable summary of the value proposition.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #F8F9FA;
+            color: #212529;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            max-height: 300px;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .gradient-text {
+            background: -webkit-linear-gradient(45deg, #007BFF, #28A745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .workflow-step {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .workflow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .log-entry {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .blinking-dot {
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold gradient-text">Agentic AI Cold Chain</h1>
+            <div>
+                <a href="#workflow" class="text-gray-600 hover:text-blue-600 transition font-medium">การทำงาน</a>
+                <a href="#simulation" class="ml-6 text-gray-600 hover:text-blue-600 transition font-medium">การจำลอง</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="hero" class="text-center fade-in-section">
+            <h2 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight text-gray-800">
+                Agentic AI Cold Chain<br>Monitoring and Control System
+            </h2>
+            <p class="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto mb-6">
+                ระบบสมองกลควบคุมอุณหภูมิและติดตามสินค้ารายชิ้นในห่วงโซ่ความเย็นแบบอัตโนมัติ
+            </p>
+            <p class="text-md md:text-lg text-gray-500 max-w-3xl mx-auto">
+                เราพัฒนาระบบ AI ที่เข้าใจและตัดสินใจได้เอง เพื่อควบคุมอุณหภูมิของสินค้าควบคุมเย็น พร้อมติดตามแบบรายชิ้น ตั้งแต่บรรจุจนถึงปลายทาง เพิ่มความเชื่อมั่นให้กับผู้ซื้อและลดของเสียในระบบ
+            </p>
+        </section>
+
+        <section id="concept" class="py-16 fade-in-section">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">แนวคิดหลัก: AI ที่ตัดสินใจได้เอง</h3>
+                <p class="text-lg text-gray-600 mt-2">ระบบของเราทำงานด้วย Agentic AI ที่มีความสามารถครบวงจรในการจัดการห่วงโซ่ความเย็น</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 text-center max-w-5xl mx-auto">
+                <div class="p-6">
+                    <div class="text-6xl mb-4">📡</div>
+                    <h4 class="text-2xl font-bold mb-2">รับรู้ (Perceive)</h4>
+                    <p class="text-gray-600">รวบรวมข้อมูล Real-time จากเซ็นเซอร์ IoT, ภาพถ่ายสินค้า, และข้อมูลสภาพแวดล้อม</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-6xl mb-4">🧠</div>
+                    <h4 class="text-2xl font-bold mb-2">วิเคราะห์ (Analyze)</h4>
+                    <p class="text-gray-600">ประมวลผลข้อมูลที่ได้รับ เปรียบเทียบกับเงื่อนไขมาตรฐาน และคาดการณ์ความเสี่ยงที่อาจเกิดขึ้น</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-6xl mb-4">💡</div>
+                    <h4 class="text-2xl font-bold mb-2">ตัดสินใจ (Decide)</h4>
+                    <p class="text-gray-600">สั่งการควบคุมระบบต่างๆ โดยอัตโนมัติ เช่น ปรับอุณหภูมิ, เปลี่ยนเส้นทาง เพื่อแก้ปัญหาทันที</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="workflow" class="py-16 bg-white rounded-2xl shadow-lg fade-in-section">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">ภาพรวมการทำงานของระบบ (Workflow)</h3>
+                <p class="text-lg text-gray-600 mt-2">ติดตามการเดินทางของสินค้าตั้งแต่ต้นจนจบผ่าน 3 ขั้นตอนอัจฉริยะ</p>
+            </div>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-0 px-4">
+                <!-- Step 1 -->
+                <div class="workflow-step bg-blue-50 text-center p-6 rounded-xl border border-blue-200 w-full md:w-1/3">
+                    <div class="text-5xl mb-3">📦</div>
+                    <h4 class="text-xl font-bold mb-2">1. ต้นทาง: บรรจุและตรวจสอบ</h4>
+                    <ul class="text-left space-y-2 text-gray-700">
+                        <li><span class="text-blue-500 mr-2">✓</span> ถ่ายภาพสินค้าด้วย Computer Vision</li>
+                        <li><span class="text-blue-500 mr-2">✓</span> ตรวจสอบคุณภาพและให้เกรด</li>
+                        <li><span class="text-blue-500 mr-2">✓</span> สร้าง QR Code ประจำรายชิ้น</li>
+                    </ul>
+                </div>
+                <div class="text-4xl text-gray-300 mx-4 transform rotate-90 md:rotate-0">→</div>
+                <!-- Step 2 -->
+                <div class="workflow-step bg-green-50 text-center p-6 rounded-xl border border-green-200 w-full md:w-1/3">
+                    <div class="text-5xl mb-3">🚚</div>
+                    <h4 class="text-xl font-bold mb-2">2. กลางทาง: ขนส่งและควบคุม</h4>
+                    <ul class="text-left space-y-2 text-gray-700">
+                        <li><span class="text-green-500 mr-2">✓</span> AI วิเคราะห์ข้อมูลเซ็นเซอร์</li>
+                        <li><span class="text-green-500 mr-2">✓</span> สั่งปรับอุณหภูมิอัตโนมัติ</li>
+                        <li><span class="text-green-500 mr-2">✓</span> วางแผนเส้นทางใหม่เมื่อจำเป็น</li>
+                    </ul>
+                </div>
+                <div class="text-4xl text-gray-300 mx-4 transform rotate-90 md:rotate-0">→</div>
+                <!-- Step 3 -->
+                <div class="workflow-step bg-indigo-50 text-center p-6 rounded-xl border border-indigo-200 w-full md:w-1/3">
+                    <div class="text-5xl mb-3">🏁</div>
+                    <h4 class="text-xl font-bold mb-2">3. ปลายทาง: ตรวจสอบย้อนกลับ</h4>
+                    <ul class="text-left space-y-2 text-gray-700">
+                        <li><span class="text-indigo-500 mr-2">✓</span> สแกน QR Code ดูประวัติทั้งหมด</li>
+                        <li><span class="text-indigo-500 mr-2">✓</span> ดูภาพ, กราฟอุณหภูมิ, เส้นทาง</li>
+                        <li><span class="text-indigo-500 mr-2">✓</span> ยืนยันคุณภาพและความปลอดภัย</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulation" class="py-20 fade-in-section">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">Live Simulation: AI in Action</h3>
+                <p class="text-lg text-gray-600 mt-2">ชมการทำงานของ Agentic AI ในการควบคุมอุณหภูมิแบบเรียลไทม์</p>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-8 items-start max-w-6xl mx-auto bg-gray-100 p-8 rounded-2xl shadow-inner">
+                <div class="chart-container">
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md h-full">
+                    <h4 class="text-xl font-bold mb-4 flex items-center">
+                        <span class="text-green-500 mr-3 blinking-dot">●</span>AI Action Log
+                    </h4>
+                    <div id="aiLog" class="space-y-3 text-sm h-64 overflow-y-auto pr-2">
+                        <!-- AI log entries will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="benefits" class="py-16 fade-in-section">
+             <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">ประโยชน์ของระบบ</h3>
+                <p class="text-lg text-gray-600 mt-2">สร้างคุณค่าใหม่ให้กับห่วงโซ่ความเย็นของไทย</p>
+            </div>
+             <div class="grid md:grid-cols-3 gap-8 text-center max-w-5xl mx-auto">
+                <div class="p-6">
+                    <div class="text-5xl mb-4">🛡️</div>
+                    <h4 class="text-xl font-bold mb-2">เพิ่มความเชื่อมั่น</h4>
+                    <p class="text-gray-600">ผู้ซื้อสามารถตรวจสอบประวัติสินค้าได้ทุกชิ้น สร้างความโปร่งใสและไว้วางใจ</p>
+                </div>
+                 <div class="p-6">
+                    <div class="text-5xl mb-4">📉</div>
+                    <h4 class="text-xl font-bold mb-2">ลดของเสียในระบบ</h4>
+                    <p class="text-gray-600">การควบคุมเชิงรุกช่วยป้องกันความเสียหาย ลดการสูญเสียอาหาร ยา และสินค้าเกษตร</p>
+                </div>
+                 <div class="p-6">
+                    <div class="text-5xl mb-4">📈</div>
+                    <h4 class="text-xl font-bold mb-2">เพิ่มประสิทธิภาพ</h4>
+                    <p class="text-gray-600">ระบบอัตโนมัติช่วยลดข้อผิดพลาดของมนุษย์และปรับปรุงการดำเนินงานให้ดีที่สุด</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <h4 class="text-2xl font-bold mb-2">Agentic AI Cold Chain</h4>
+            <p class="text-sm text-gray-400">ปฏิวัติการขนส่งสินค้าควบคุมอุณหภูมิด้วยปัญญาประดิษฐ์</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Chart.js Simulation
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+            let temperatureData = [];
+            let timeLabels = [];
+            let currentTime = new Date();
+
+            function addDataPoint(temp) {
+                if (temperatureData.length > 30) {
+                    temperatureData.shift();
+                    timeLabels.shift();
+                }
+                const timeString = currentTime.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                temperatureData.push(temp);
+                timeLabels.push(timeString);
+                currentTime.setSeconds(currentTime.getSeconds() + 10);
+            }
+
+            // Initial data
+            let currentTemp = 3.5;
+            for (let i = 0; i < 15; i++) {
+                addDataPoint(currentTemp + (Math.random() - 0.5) * 0.2);
+            }
+
+            const temperatureChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'อุณหภูมิ Real-time (°C)',
+                        data: temperatureData,
+                        borderColor: '#007BFF',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                    }, {
+                        label: 'อุณหภูมิเป้าหมายสูงสุด',
+                        data: Array(30).fill(4.0),
+                        borderColor: 'rgba(255, 99, 132, 0.5)',
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                    }, {
+                        label: 'อุณหภูมิเป้าหมายต่ำสุด',
+                        data: Array(30).fill(2.0),
+                        borderColor: 'rgba(255, 99, 132, 0.5)',
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 10,
+                            title: { display: true, text: 'อุณหภูมิ (°C)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'เวลา' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'การตรวจสอบและควบคุมอุณหภูมิโดย Agentic AI'
+                        }
+                    }
+                }
+            });
+
+            // AI Log Simulation
+            const aiLog = document.getElementById('aiLog');
+            function addLogEntry(message, type = 'info') {
+                const colors = {
+                    info: 'text-gray-500',
+                    action: 'text-blue-600 font-semibold',
+                    warning: 'text-orange-600 font-semibold',
+                    success: 'text-green-600 font-semibold'
+                };
+                const logTime = new Date().toLocaleTimeString('th-TH', { hour12: false });
+                const newEntry = document.createElement('div');
+                newEntry.className = `log-entry ${colors[type]}`;
+                newEntry.innerHTML = `<span class="font-mono text-xs mr-2">[${logTime}]</span> ${message}`;
+                aiLog.prepend(newEntry);
+                if (aiLog.children.length > 10) {
+                    aiLog.lastChild.remove();
+                }
+            }
+
+            addLogEntry('ระบบ Agentic AI เริ่มทำงาน', 'success');
+            addLogEntry('ติดตามอุณหภูมิตู้สินค้า #C-1337', 'info');
+
+            let eventCounter = 0;
+            setInterval(function() {
+                // Simulate temperature drift
+                currentTemp += (Math.random() - 0.48) * 0.5;
+                
+                let logMessage = null;
+                let messageType = 'info';
+
+                // Simulate AI decision
+                if (currentTemp > 4.0) {
+                    currentTemp -= 0.5; // AI corrects
+                    logMessage = '⚠️ อุณหภูมิสูงเกินไป! AI สั่งปรับลดความเย็น';
+                    messageType = 'warning';
+                } else if (currentTemp < 2.0) {
+                    currentTemp += 0.5; // AI corrects
+                    logMessage = '⚠️ อุณหภูมิต่ำเกินไป! AI สั่งลดการทำงานเครื่องทำความเย็น';
+                    messageType = 'warning';
+                }
+
+                addDataPoint(currentTemp);
+                temperatureChart.data.datasets[0].data = temperatureData;
+                temperatureChart.data.labels = timeLabels;
+                temperatureChart.update('none');
+
+                if (logMessage) {
+                    addLogEntry(logMessage, messageType);
+                }
+
+                // Simulate other events
+                eventCounter++;
+                if (eventCounter % 25 === 0) {
+                    addLogEntry('🚗 ตรวจพบการจราจรติดขัด, AI กำลังคำนวณเส้นทางใหม่...', 'action');
+                }
+                 if (eventCounter % 35 === 0) {
+                    addLogEntry('✅ คำนวณเส้นทางใหม่เสร็จสิ้น, ประหยัดเวลา 15 นาที', 'success');
+                }
+
+            }, 2000);
+
+            // Fade-in animation on scroll
+            const faders = document.querySelectorAll('.fade-in-section');
+            const appearOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('visible');
+                        appearOnScroll.unobserve(entry.target);
+                    }
+                });
+            }, appearOptions);
+
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+        });
+    </script>
+</body>
+</html>
